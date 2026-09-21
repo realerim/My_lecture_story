@@ -57,7 +57,7 @@ def extract_scene_frames(video_path: Path, out_dir: Path, threshold: float) -> l
             str(video_path),
             "-vf",
             f"select='gt(scene,{threshold})',showinfo",
-            "-vsync",
+            "-fps_mode",
             "vfr",
             str(out_dir / "scene_%05d.png"),
         ]

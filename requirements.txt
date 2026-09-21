@@ -1,0 +1,23 @@
+# Core (needed for both live capture and recorded-video processing)
+Pillow>=10.0
+imagehash>=4.3
+numpy>=1.24
+
+# Live screen/audio capture (only needed for `lecture-note record`)
+mss>=9.0
+sounddevice>=0.4.6
+soundfile>=0.12
+
+# Transcription (local, no API key required)
+faster-whisper>=1.0
+
+# Note organization via Claude (optional; falls back to raw transcript if no API key)
+anthropic>=0.40
+
+# Web viewer
+fastapi>=0.110
+uvicorn>=0.29
+jinja2>=3.1
+
+# Dev/test
+pytest>=8.0

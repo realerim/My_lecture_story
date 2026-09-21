@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <title>{{ title }} - 학습 노트</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header>
+    <h1>{{ title }}</h1>
+    <a href="/">← 목록</a>
+  </header>
+  <main>
+    <p class="status" id="status">불러오는 중...</p>
+    <div id="sections"></div>
+  </main>
+
+  <script>
+    const sessionId = {{ session_id | tojson }};
+
+    function escapeHtml(str) {
+      const div = document.createElement("div");
+      div.innerText = str;
+      return div.innerHTML;
+    }
+
+    async function refresh() {
+      try {
+        const res = await fetch(`/session/${sessionId}/data`);
+        if (!res.ok) return;
+        const data = await res.json();
+
+        document.getElementById("status").textContent = data.finalized
+          ? "정리 완료 (notes.md 생성됨)"
+          : `진행 중 · 섹션 ${data.sections.length}개 · 5초마다 자동 새로고침`;
+
+        const container = document.getElementById("sections");
+        container.innerHTML = "";
+        for (const sec of data.sections) {
+          const card = document.createElement("div");
+          card.className = "section-card";
+          card.innerHTML = `
+            <div class="section-time">[${sec.time_label}]${sec.organized ? " · Claude 정리됨" : ""}</div>
+            ${sec.image_url ? `<img src="${sec.image_url}" alt="slide ${sec.index + 1}" />` : ""}
+            <div class="section-text">${escapeHtml(sec.text)}</div>
+          `;
+          container.appendChild(card);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    refresh();
+    setInterval(refresh, 5000);
+  </script>
+</body>
+</html>

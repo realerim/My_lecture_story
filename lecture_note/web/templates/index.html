@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <title>학습 노트</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header><h1>학습 노트</h1></header>
+  <main>
+    {% if sessions %}
+    <ul class="session-list">
+      {% for s in sessions %}
+      <li>
+        <a href="/session/{{ s.id }}">{{ s.title }}</a>
+        <span class="badge">{{ "녹화본 처리" if s.mode == "process" else "실시간" }} · {{ "정리 완료" if s.has_notes else "진행 중" }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p>아직 세션이 없습니다. <code>lecture-note record</code> 또는 <code>lecture-note process &lt;video&gt;</code>로 시작하세요.</p>
+    {% endif %}
+  </main>
+</body>
+</html>

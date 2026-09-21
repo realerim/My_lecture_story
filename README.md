@@ -48,6 +48,25 @@ Claude로 노트를 정리하고 싶다면(권장) 환경변수로 API 키를 �
 export ANTHROPIC_API_KEY=sk-ant-...
 ```
 
+## 빠른 테스트 (Zoom/마이크 설정 없이)
+
+Zoom이나 오디오 루프백을 준비하지 않고도 파이프라인 전체(장면 전환 감지 → 전사 →
+강의자료 매칭 → 노트 생성 → 웹뷰어)를 바로 확인할 수 있도록, 화면이 3번 바뀌는 가짜
+강의 영상과 그에 맞는 강의자료 PDF를 만들어주는 스크립트를 넣어뒀습니다.
+
+```bash
+pip install -e .
+python scripts/generate_demo.py demo   # ffmpeg, espeak-ng, 한글 폰트(fonts-noto-cjk) 필요
+lecture-note process demo/lecture.mp4 --materials demo/slides.pdf --whisper-model tiny
+lecture-note serve
+```
+
+`http://127.0.0.1:8000`에서 스크린샷 3장 + 정리된 텍스트가 나오면 정상 동작하는 것입니다.
+실제로 이 저장소 안에서 위 과정을 실행해 장면 전환 감지·강의자료 매칭·노트 생성·웹뷰어
+전부 동작을 확인했습니다(전사 모델 다운로드만 이 샌드박스의 네트워크 정책상 huggingface.co가
+막혀 있어 직접 실행하지 못했고, 대신 나레이션 원문을 그대로 넣어 이후 단계를 검증했습니다 —
+일반 인터넷이 되는 환경에서는 `lecture-note process`가 첫 실행 시 자동으로 모델을 받습니다).
+
 ## 실시간 모드: `lecture-note record`
 
 1. Zoom 미팅에 평소처럼 참여하고, 발표자가 화면 공유를 시작합니다.
@@ -107,7 +126,10 @@ Zoom 클라우드/로컬 녹화 파일을 그대로 넘깁니다.
 lecture-note process ~/Downloads/zoom_lecture.mp4 --title "자료구조 3주차"
 ```
 
-- `--scene-threshold` (기본 0.4, 0~1): 낮출수록 더 미세한 화면 변화도 캡처합니다.
+- `--scene-threshold` (기본 0.01, 0~1): 낮출수록 더 미세한 화면 변화도 캡처합니다. 정지된
+  발표 자료 화면은 카메라 촬영 영상보다 장면 전환 점수가 훨씬 낮게 나와(실측 기준 전환
+  시 0.01~0.08, 평상시 0.0005 이하) 기본값을 낮게 잡았습니다. 화면이 너무 자주/적게
+  잡히면 이 값을 조절하세요.
 - 오디오 전체를 한 번에 전사하므로 영상 길이에 따라 시간이 걸릴 수 있습니다
   (`--whisper-model tiny`나 `small`로 속도를 높일 수 있습니다).
 

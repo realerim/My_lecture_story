@@ -143,7 +143,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_process = sub.add_parser("process", parents=[common_note], help="이미 녹화된 Zoom 영상 파일을 처리")
     p_process.add_argument("video", help="녹화 영상 파일 경로 (mp4 등)")
     p_process.add_argument("--title", help="강의 제목")
-    p_process.add_argument("--scene-threshold", type=float, help="화면 전환 감지 민감도(0~1, 낮을수록 민감), 기본 0.4")
+    p_process.add_argument("--scene-threshold", type=float, help="화면 전환 감지 민감도(0~1, 낮을수록 민감), 기본 0.01")
     p_process.set_defaults(func=cmd_process)
 
     p_serve = sub.add_parser("serve", help="로컬 웹뷰어 실행")

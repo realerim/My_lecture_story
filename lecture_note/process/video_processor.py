@@ -32,7 +32,11 @@ def _check_ffmpeg() -> None:
 
 def _run_ffmpeg(args: list[str]) -> str:
     _check_ffmpeg()
-    result = subprocess.run(["ffmpeg", *args], capture_output=True, text=True)
+    # ffmpeg는 항상 UTF-8로 출력하지만, 한글 Windows의 기본 콘솔 인코딩(cp949)으로
+    # capture_output을 디코딩하면 깨진 바이트에서 UnicodeDecodeError가 난다.
+    result = subprocess.run(
+        ["ffmpeg", *args], capture_output=True, text=True, encoding="utf-8", errors="replace"
+    )
     if result.returncode != 0:
         raise RuntimeError(f"ffmpeg 실행 실패:\n{result.stderr[-4000:]}")
     return result.stderr

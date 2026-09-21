@@ -45,6 +45,12 @@ def cmd_record(args: argparse.Namespace) -> None:
     session.ensure_dirs()
     session.write_meta(title=title, mode="record")
 
+    if args.materials:
+        from lecture_note.notes.materials import import_materials
+
+        print(f"[lecture-note] 강의 자료 {len(args.materials)}개 불러오는 중...")
+        import_materials(session, [Path(p) for p in args.materials])
+
     transcriber = Transcriber(cfg.whisper_model, cfg.whisper_device, cfg.whisper_compute_type, cfg.language)
     live_worker = LiveTranscriptionWorker(session, transcriber)
 
@@ -93,7 +99,8 @@ def cmd_process(args: argparse.Namespace) -> None:
     from lecture_note.process.video_processor import process_video
 
     cfg = _build_config(args)
-    session = process_video(Path(args.video), cfg, title=args.title)
+    material_pdfs = [Path(p) for p in args.materials] if args.materials else None
+    session = process_video(Path(args.video), cfg, title=args.title, material_pdfs=material_pdfs)
     print(f"[lecture-note] 완료: {session.notes_path}")
 
 
@@ -118,6 +125,12 @@ def build_parser() -> argparse.ArgumentParser:
     common_note.add_argument("--whisper-model", help="tiny/base/small/medium/large-v3 (기본 small)")
     common_note.add_argument("--language", help="전사 언어 코드 (기본 ko)")
     common_note.add_argument("--no-claude", action="store_true", help="Claude 정리 단계를 건너뛰고 원문 전사만 사용")
+    common_note.add_argument(
+        "--materials",
+        nargs="+",
+        metavar="PDF",
+        help="미리 가진 강의 자료 PDF 경로(여러 개 가능). 화면과 비슷한 페이지를 찾아 설명에 참고합니다.",
+    )
 
     p_record = sub.add_parser("record", parents=[common_note], help="Zoom 미팅에 참여한 상태에서 화면/음성을 실시간으로 감시")
     p_record.add_argument("--title", help="강의 제목")

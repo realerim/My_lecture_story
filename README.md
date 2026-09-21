@@ -111,6 +111,24 @@ lecture-note process ~/Downloads/zoom_lecture.mp4 --title "자료구조 3주차"
 - 오디오 전체를 한 번에 전사하므로 영상 길이에 따라 시간이 걸릴 수 있습니다
   (`--whisper-model tiny`나 `small`로 속도를 높일 수 있습니다).
 
+## 미리 가진 강의 자료(PDF) 참고시키기
+
+수업 전에 슬라이드나 교재 PDF가 있다면 `--materials`로 넘겨주세요. `record`/`process`
+둘 다 지원합니다.
+
+```bash
+lecture-note record --title "자료구조 3주차" --materials ~/Downloads/slides.pdf
+lecture-note process lecture.mp4 --materials ~/Downloads/slides.pdf ~/Downloads/textbook.pdf
+```
+
+캡처된 화면 스크린샷과 가장 비슷한 자료 페이지를 자동으로 찾아, Claude가 그 페이지의
+원문 텍스트까지 참고해 설명을 보강합니다(정확한 수치·용어 등 화면만으로는 놓치기 쉬운
+내용 보완). 일치하는 페이지를 참고했을 때만 노트 끝에 `(참고: 강의자료 N페이지)`가
+붙습니다. PPT(.pptx) 파일은 PDF로 내보낸 뒤 사용하세요.
+
+> 정리된 설명은 섹션마다 불릿 3~4개, 한 문장씩으로 길이를 제한합니다. 화면 전환이
+> 잦은 강의라도 각 섹션이 장황해져 읽기 어려워지지 않도록 하기 위함입니다.
+
 ## 노트 형식
 
 각 섹션은 "화면이 바뀐 시점"을 기준으로 나뉘며, 다음을 포함합니다.
@@ -128,6 +146,7 @@ data/sessions/20260921-143000_자료구조-3주차/
     screen_events.jsonl
     transcript.jsonl
     organized.json         ← Claude 정리본 (있는 경우)
+    materials/              ← --materials로 넘긴 PDF를 페이지별로 저장 (있는 경우)
 ```
 
 ## 명령어 요약
@@ -139,9 +158,9 @@ data/sessions/20260921-143000_자료구조-3주차/
 | `lecture-note serve` | 로컬 웹뷰어 실행 (`--host`, `--port`) |
 | `lecture-note list-devices` | 사용 가능한 오디오 입력 장치 목록 |
 
-모든 명령은 `--no-claude`로 Claude 정리 단계를 끄고 원문 전사만 남길 수 있고,
-`--whisper-model`로 tiny/base/small/medium/large-v3 중 전사 모델 크기를,
-`--language`로 전사 언어(기본 `ko`)를 지정할 수 있습니다.
+`record`/`process`는 공통으로 `--no-claude`(Claude 정리 단계를 끄고 원문 전사만 남김),
+`--whisper-model`(tiny/base/small/medium/large-v3), `--language`(기본 `ko`),
+`--materials`(참고할 강의 자료 PDF)를 지원합니다.
 
 ## 개발 / 테스트
 

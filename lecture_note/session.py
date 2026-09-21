@@ -6,6 +6,7 @@ data/sessions/<session_id>/
     audio_chunks/          오디오 청크 (전사 후 삭제해도 무방)
     screen_events.jsonl    {"ts": 12.3, "image": "screenshots/frame_000123.png", "phash": "..."}
     transcript.jsonl       {"start": 10.0, "end": 18.4, "text": "..."}
+    materials/              미리 업로드한 강의 자료(PDF) 페이지 이미지 + materials.json
     notes.md               최종 마크다운 노트
 """
 from __future__ import annotations
@@ -61,6 +62,23 @@ class Session:
     @property
     def organized_path(self) -> Path:
         return self.root / "organized.json"
+
+    @property
+    def materials_dir(self) -> Path:
+        return self.root / "materials"
+
+    @property
+    def materials_path(self) -> Path:
+        return self.materials_dir / "materials.json"
+
+    def write_materials(self, pages: list[dict]) -> None:
+        self.materials_dir.mkdir(parents=True, exist_ok=True)
+        self.materials_path.write_text(json.dumps(pages, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    def read_materials(self) -> list[dict]:
+        if not self.materials_path.exists():
+            return []
+        return json.loads(self.materials_path.read_text(encoding="utf-8"))
 
     def write_organized(self, organized_by_index: dict[int, str]) -> None:
         payload = {str(k): v for k, v in organized_by_index.items()}

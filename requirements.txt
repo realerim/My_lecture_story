@@ -2,6 +2,7 @@
 Pillow>=10.0
 imagehash>=4.3
 numpy>=1.24
+pymupdf>=1.24  # 강의 자료 PDF를 페이지 이미지/텍스트로 불러오는 데 사용
 
 # Live screen/audio capture (only needed for `lecture-note record`)
 mss>=9.0

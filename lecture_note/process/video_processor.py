@@ -89,7 +89,9 @@ def extract_scene_frames(video_path: Path, out_dir: Path, threshold: float) -> l
     return deduped  # type: ignore[return-value]
 
 
-def process_video(video_path: Path, config: Config, title: str | None = None) -> Session:
+def process_video(
+    video_path: Path, config: Config, title: str | None = None, material_pdfs: list[Path] | None = None
+) -> Session:
     video_path = Path(video_path)
     if not video_path.exists():
         raise FileNotFoundError(video_path)
@@ -97,6 +99,12 @@ def process_video(video_path: Path, config: Config, title: str | None = None) ->
     session = Session(new_session_id(title or video_path.stem))
     session.ensure_dirs()
     session.write_meta(title=title or video_path.stem, source_video=str(video_path), mode="process")
+
+    if material_pdfs:
+        from lecture_note.notes.materials import import_materials
+
+        logger.info("강의 자료 %d개 불러오는 중...", len(material_pdfs))
+        import_materials(session, material_pdfs)
 
     logger.info("오디오 추출 중...")
     audio_path = session.audio_chunks_dir / "full_audio.wav"
@@ -132,7 +140,8 @@ def finalize_notes(session: Session, config: Config, title: str) -> None:
     api_key = os.environ.get("ANTHROPIC_API_KEY") if config.use_claude_summary else None
     if api_key:
         logger.info("Claude로 섹션 정리 중 (%d개 섹션)...", len(sections))
-        summarizer.organize_sections(sections, session.root, api_key, config.claude_model)
+        materials = session.read_materials()
+        summarizer.organize_sections(sections, session.root, api_key, config.claude_model, materials=materials)
         session.write_organized({s.index: s.organized_text for s in sections if s.organized_text})
 
     markdown = render_markdown(title, session.session_id, sections)

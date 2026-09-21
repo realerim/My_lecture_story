@@ -3,6 +3,23 @@ name = "lecture-note"
 version = "0.1.0"
 description = "Zoom 실시간 화면/음성을 감시해 교수님 강의 흐름대로 정리된 학습 노트를 만드는 프로그램"
 requires-python = ">=3.10"
+dependencies = [
+    "Pillow>=10.0",
+    "imagehash>=4.3",
+    "numpy>=1.24",
+    "pymupdf>=1.24",
+    "mss>=9.0",
+    "sounddevice>=0.4.6",
+    "soundfile>=0.12",
+    "faster-whisper>=1.0",
+    "anthropic>=0.40",
+    "fastapi>=0.110",
+    "uvicorn>=0.29",
+    "jinja2>=3.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
 
 [project.scripts]
 lecture-note = "lecture_note.cli:main"

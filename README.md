@@ -190,7 +190,7 @@ data/sessions/20260921-143000_자료구조-3주차/
 유닛 테스트로 검증됩니다.
 
 ```bash
-pip install -e . pytest
+pip install -e ".[dev]"
 pytest
 ```
 

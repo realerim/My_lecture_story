@@ -1,24 +1,7 @@
-# Core (needed for both live capture and recorded-video processing)
-Pillow>=10.0
-imagehash>=4.3
-numpy>=1.24
-pymupdf>=1.24  # 강의 자료 PDF를 페이지 이미지/텍스트로 불러오는 데 사용
-
-# Live screen/audio capture (only needed for `lecture-note record`)
-mss>=9.0
-sounddevice>=0.4.6
-soundfile>=0.12
-
-# Transcription (local, no API key required)
-faster-whisper>=1.0
-
-# Note organization via Claude (optional; falls back to raw transcript if no API key)
-anthropic>=0.40
-
-# Web viewer
-fastapi>=0.110
-uvicorn>=0.29
-jinja2>=3.1
-
-# Dev/test
-pytest>=8.0
+# 의존성은 pyproject.toml의 [project.dependencies]에 정의되어 있습니다.
+# 아래처럼 패키지 자체를 설치하면 됩니다 (동기화가 어긋나지 않도록 이 파일은
+# 실제 버전 목록을 중복해서 들고 있지 않습니다).
+#
+#   pip install -e .          # 실행에 필요한 것만
+#   pip install -e ".[dev]"   # + pytest (테스트용)
+-e .[dev]
